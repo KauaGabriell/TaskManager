@@ -1,4 +1,4 @@
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import express from 'express';
 import 'dotenv/config';
 
@@ -11,6 +11,6 @@ app.listen(PORT, () => {
   console.log(`Servidor Rodando em: http://localhost:${PORT}`);
 });
 
-app.get('/health', (reponse: Response) => {
-  return reponse.json({ message: 'OK' });
+app.get('/health', (request: Request, response: Response) => {
+  return response.json({ message: 'API ONLINE' });
 });
