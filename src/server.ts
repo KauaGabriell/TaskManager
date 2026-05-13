@@ -11,6 +11,7 @@ app.listen(PORT, () => {
   console.log(`Servidor Rodando em: http://localhost:${PORT}`);
 });
 
+// biome-ignore lint/correctness/noUnusedFunctionParameters: <explanation>
 app.get('/health', (request: Request, response: Response) => {
   return response.json({ message: 'API ONLINE' });
 });
