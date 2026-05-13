@@ -6,3 +6,86 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum UserRole {
+  admin
+  member
+}
+
+enum TaskStatus {
+  pending
+  in_progress
+  completed
+}
+
+enum TaskPriority {
+  high
+  medium
+  low
+}
+
+model User {
+  id            String        @id @default(uuid())
+  name          String
+  email         String        @unique
+  password      String
+  role          UserRole      @default(member)
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @map("updated_at")
+  teamMember    TeamMember[]
+  tasks         Task[]
+  taskHistories TaskHistory[]
+
+  @@map("users")
+}
+
+model Team {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @default(now()) @map("updated_at")
+  teamMember  TeamMember[]
+  tasks       Task[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [user_id], references: [id])
+  team      Team     @relation(fields: [team_id], references: [id])
+  user_id   String   @unique
+  team_id   String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("team_members")
+}
+
+model Task {
+  id            String        @id @default(uuid())
+  title         String
+  description   String
+  status        TaskStatus    @default(pending)
+  priority      TaskPriority
+  assigned_to   User          @relation(fields: [user_id], references: [id])
+  team          Team          @relation(fields: [team_id], references: [id])
+  user_id       String        @unique
+  team_id       String        @unique
+  taskHistories TaskHistory[]
+
+  @@map("tasks")
+}
+
+model TaskHistory {
+  id        String     @default(uuid())
+  task      Task       @relation(fields: [task_id], references: [id])
+  changedBy User       @relation(fields: [user_id], references: [id])
+  task_id   String     @unique
+  user_id   String     @unique
+  oldStatus TaskStatus @map("old_status")
+  newStatus TaskStatus @map("new_status")
+  changedAt DateTime   @default(now()) @map("changed_at")
+
+  @@map("tasks_history")
+}
