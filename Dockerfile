@@ -1,10 +1,10 @@
-FROM node:22.20-alpine
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
@@ -12,4 +12,4 @@ RUN npx prisma generate
 
 EXPOSE 3333
 
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "npx prisma generate && npm run dev"]
