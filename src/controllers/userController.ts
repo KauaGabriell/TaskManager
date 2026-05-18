@@ -8,8 +8,8 @@ class UserController {
   async create(request: Request, response: Response, next: NextFunction) {
     const bodySchema = z.object({
       name: z.string().min(2),
-      email: z.email(),
-      password: z.string().min(4),
+      email: z.email().transform((email) => email.trim().toLocaleLowerCase()),
+      password: z.string().min(6),
     });
 
     const { name, email, password } = bodySchema.parse(request.body);
