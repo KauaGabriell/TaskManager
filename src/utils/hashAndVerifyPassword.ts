@@ -13,4 +13,5 @@ export async function verifyPassword(password: string, userPassword: string) {
   const passwordMatch = await bcrypt.compare(password, userPassword);
 
   if (!passwordMatch) throw new AppError('Invalid Credentials', 401);
+  return passwordMatch;
 }
