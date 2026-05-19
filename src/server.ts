@@ -7,8 +7,7 @@ import { routes } from './routes/index.js';
 const app = express();
 app.use(express.json());
 
-// biome-ignore lint/correctness/noUnusedFunctionParameters: <explanation>
-app.get('/health', (request: Request, response: Response) => {
+app.get('/health', (_request: Request, response: Response) => {
   return response.json({ message: 'API ONLINE' });
 });
 

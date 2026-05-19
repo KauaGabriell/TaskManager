@@ -4,9 +4,9 @@ import { AppError } from '../utils/AppError.js';
 
 export function errorHandling(
   error: unknown,
-  request: Request,
+  _request: Request,
   response: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) {
   
   if (error instanceof AppError)
