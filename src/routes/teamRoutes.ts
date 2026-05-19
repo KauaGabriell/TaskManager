@@ -10,5 +10,6 @@ teamRoutes.use(ensureAuthentication);
 teamRoutes.use(verifyUserAuthorization(['admin']));
 
 teamRoutes.post('/', teamController.create);
+teamRoutes.get('/', teamController.index);
 
 export { teamRoutes };
