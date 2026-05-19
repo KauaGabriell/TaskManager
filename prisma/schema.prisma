@@ -55,10 +55,11 @@ model TeamMember {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [user_id], references: [id])
   team      Team     @relation(fields: [team_id], references: [id])
-  user_id   String   @unique
-  team_id   String   @unique
+  user_id   String
+  team_id   String
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@unique([user_id, team_id])
   @@map("team_members")
 }
 
