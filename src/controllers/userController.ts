@@ -22,7 +22,7 @@ class UserController {
         password: hashedPassword,
       },
     });
-    console.log(user);
+  
     if (!user) throw new AppError('Not Created', 404);
 
     return response.status(201).json(user);
