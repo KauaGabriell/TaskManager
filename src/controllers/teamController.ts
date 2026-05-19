@@ -18,8 +18,7 @@ class TeamController {
         description,
       },
     });
-    if (!team) throw new AppError('Not Created', 401);
-
+    
     return response.status(201).json(team);
   }
   async index(_request: Request, response: Response) {
@@ -29,6 +28,28 @@ class TeamController {
       },
     });
     return response.status(200).json(teams);
+  }
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({ id: z.uuid() });
+    const bodySchema = z.object({
+      name: z.string().min(2).optional(),
+      description: z.string().trim().optional(),
+    });
+
+    const { id } = paramsSchema.parse(request.params);
+    const { name, description } = bodySchema.parse(request.body);
+
+    const team = await prisma.team.findUnique({
+      where: { id },
+    });
+    if (!team) throw new AppError('Resource not found', 404);
+
+    const newTeam = await prisma.team.update({
+      where: { id },
+      data: { name, description },
+    });
+
+    return response.status(200).json(newTeam);
   }
 }
 
