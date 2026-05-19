@@ -21,6 +21,9 @@ export function errorHandling(
   if (isPrismaError(error) && error.code === 'P2025')
     return response.status(404).json({ message: 'Resource not found' });
 
+  if (isPrismaError(error) && error.code === 'P2002')
+    return response.status(409).json({ message: 'Resource already exists' });
+
   return response.status(500).json({ message: 'Internal Server Error' });
 }
 
