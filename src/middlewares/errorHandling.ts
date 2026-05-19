@@ -24,6 +24,9 @@ export function errorHandling(
   if (isPrismaError(error) && error.code === 'P2002')
     return response.status(409).json({ message: 'Resource already exists' });
 
+  if (isPrismaError(error) && error.code === 'P2003')
+    return response.status(404).json({ message: 'Related resource not found' });
+
   return response.status(500).json({ message: 'Internal Server Error' });
 }
 
