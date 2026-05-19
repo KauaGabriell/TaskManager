@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../libs/prisma.js';
-import { AppError } from '../utils/AppError.js';
 
 class TeamController {
   async create(request: Request, response: Response) {
@@ -18,7 +17,7 @@ class TeamController {
         description,
       },
     });
-    
+
     return response.status(201).json(team);
   }
   async index(_request: Request, response: Response) {
@@ -39,17 +38,22 @@ class TeamController {
     const { id } = paramsSchema.parse(request.params);
     const { name, description } = bodySchema.parse(request.body);
 
-    const team = await prisma.team.findUnique({
-      where: { id },
-    });
-    if (!team) throw new AppError('Resource not found', 404);
-
     const newTeam = await prisma.team.update({
       where: { id },
       data: { name, description },
     });
 
     return response.status(200).json(newTeam);
+  }
+  async delete(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      id: z.uuid(),
+    });
+    const { id } = paramsSchema.parse(request.params);
+
+    await prisma.team.delete({ where: { id } });
+
+    return response.status(200).json({ message: 'Deleted successfully' });
   }
 }
 

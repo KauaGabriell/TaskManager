@@ -12,5 +12,6 @@ teamRoutes.use(verifyUserAuthorization(['admin']));
 teamRoutes.post('/', teamController.create);
 teamRoutes.get('/', teamController.index);
 teamRoutes.patch('/:id', teamController.update);
+teamRoutes.delete('/:id', teamController.delete);
 
 export { teamRoutes };
