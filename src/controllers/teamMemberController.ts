@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { prisma } from '../libs/prisma.js';
+import { AppError } from '../utils/AppError.js';
 
 class TeamMemberController {
   async createMember(request: Request, response: Response) {
@@ -37,6 +38,37 @@ class TeamMemberController {
     });
 
     return response.status(200).json({ message: 'Deleted successfully' });
+  }
+
+  async index(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      teamId: z.uuid(),
+    });
+    const { teamId } = paramsSchema.parse(request.params);
+
+    const membersTeam = await prisma.team.findUnique({
+      where: { id: teamId },
+      select: {
+        id: true,
+        name: true,
+        teamMember: {
+          select: {
+            user: { select: { id: true, name: true, email: true, role: true } },
+          },
+        },
+      },
+    });
+    if (!membersTeam) throw new AppError('Resource Not Found', 404);
+
+    const users = membersTeam?.teamMember.map((member) => member.user);
+    const teamWithMembers = {
+      team: {
+        id: membersTeam.id,
+        name: membersTeam?.name,
+      },
+      users,
+    };
+    return response.status(200).json(teamWithMembers);
   }
 }
 
