@@ -31,7 +31,7 @@ model User {
   password      String
   role          UserRole      @default(member)
   createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @map("updated_at")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
   teamMember    TeamMember[]
   tasks         Task[]
   taskHistories TaskHistory[]
@@ -44,7 +44,7 @@ model Team {
   name        String
   description String?
   createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @default(now()) @map("updated_at")
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at")
   teamMember  TeamMember[]
   tasks       Task[]
 
@@ -73,6 +73,8 @@ model Task {
   user_id       String        @unique
   team_id       String        @unique
   taskHistories TaskHistory[]
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
 
   @@map("tasks")
 }
@@ -85,7 +87,7 @@ model TaskHistory {
   user_id   String     @unique
   oldStatus TaskStatus @map("old_status")
   newStatus TaskStatus @map("new_status")
-  changedAt DateTime   @default(now()) @map("changed_at")
+  changedAt DateTime   @default(now()) @updatedAt @map("changed_at")
 
   @@map("tasks_history")
 }
