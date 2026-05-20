@@ -71,8 +71,8 @@ model Task {
   priority      TaskPriority
   assigned_to   User          @relation(fields: [user_id], references: [id])
   team          Team          @relation(fields: [team_id], references: [id])
-  user_id       String        @unique
-  team_id       String        @unique
+  user_id       String
+  team_id       String
   taskHistories TaskHistory[]
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
@@ -81,11 +81,11 @@ model Task {
 }
 
 model TaskHistory {
-  id        String     @default(uuid())
+  id        String     @id @default(uuid())
   task      Task       @relation(fields: [task_id], references: [id])
   changedBy User       @relation(fields: [user_id], references: [id])
-  task_id   String     @unique
-  user_id   String     @unique
+  task_id   String
+  user_id   String
   oldStatus TaskStatus @map("old_status")
   newStatus TaskStatus @map("new_status")
   changedAt DateTime   @default(now()) @updatedAt @map("changed_at")
