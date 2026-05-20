@@ -10,5 +10,6 @@ taskRoutes.use(ensureAuthentication);
 taskRoutes.post('/teams/:teamId', taskController.create);
 taskRoutes.get('/', taskController.index);
 taskRoutes.put('/:taskId', taskController.update);
+taskRoutes.delete('/:taskId', taskController.delete);
 
 export { taskRoutes };

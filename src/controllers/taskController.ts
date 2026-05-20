@@ -33,7 +33,6 @@ class TaskController {
     });
     return response.status(201).json(task);
   }
-
   async index(_request: Request, response: Response) {
     const tasks = await prisma.task.findMany({
       orderBy: { createdAt: 'desc' },
@@ -66,6 +65,16 @@ class TaskController {
     });
 
     return response.status(200).json(newTask);
+  }
+  async delete(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      taskId: z.uuid(),
+    });
+    const { taskId } = paramsSchema.parse(request.params);
+
+    await prisma.task.delete({ where: { id: taskId } });
+
+    return response.status(200).json({ message: 'Deleted successfully' });
   }
 }
 
