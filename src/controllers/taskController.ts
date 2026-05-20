@@ -40,6 +40,33 @@ class TaskController {
     });
     return response.status(200).json(tasks);
   }
+  async update(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      taskId: z.uuid(),
+    });
+    const bodySchema = z.object({
+      title: z.string().min(2),
+      description: z.string().trim().max(200),
+      priority: z.enum(['high', 'medium', 'low']),
+      assignedTo: z.uuid(),
+    });
+    const { taskId } = paramsSchema.parse(request.params);
+    const { title, description, priority, assignedTo } = bodySchema.parse(
+      request.body,
+    );
+
+    const newTask = await prisma.task.update({
+      where: { id: taskId },
+      data: {
+        title,
+        description,
+        priority,
+        assigned_to: { connect: { id: assignedTo } },
+      },
+    });
+
+    return response.status(200).json(newTask);
+  }
 }
 
 export { TaskController };
