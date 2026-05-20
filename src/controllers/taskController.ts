@@ -33,10 +33,17 @@ class TaskController {
     });
     return response.status(201).json(task);
   }
-  async index(_request: Request, response: Response) {
+  async index(request: Request, response: Response) {
+    const querySchema = z.object({
+      status: z.enum(['pending', 'in_progress', 'completed']).optional(),
+      priority: z.enum(['high', 'medium', 'low']).optional(),
+    });
+    const { status, priority } = querySchema.parse(request.query);
     const tasks = await prisma.task.findMany({
+      where: { status, priority },
       orderBy: { createdAt: 'desc' },
     });
+
     return response.status(200).json(tasks);
   }
   async update(request: Request, response: Response) {
