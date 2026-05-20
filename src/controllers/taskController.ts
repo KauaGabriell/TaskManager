@@ -83,6 +83,24 @@ class TaskController {
 
     return response.status(200).json({ message: 'Deleted successfully' });
   }
+  async assignUser(request: Request, response: Response) {
+    const paramsSchema = z.object({
+      taskId: z.uuid(),
+    });
+    const bodySchema = z.object({
+      assignTo: z.uuid(),
+    });
+    const { taskId } = paramsSchema.parse(request.params);
+    const { assignTo } = bodySchema.parse(request.body);
+
+    const task = await prisma.task.update({
+      where: { id: taskId },
+      data: {
+        assigned_to: { connect: { id: assignTo } },
+      },
+    });
+    return response.status(200).json(task);
+  }
 }
 
 export { TaskController };
