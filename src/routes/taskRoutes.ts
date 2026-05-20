@@ -7,6 +7,7 @@ const taskController = new TaskController();
 
 taskRoutes.use(ensureAuthentication);
 
-taskRoutes.post('/:teamId/tasks', taskController.create);
+taskRoutes.post('/teams/:teamId', taskController.create);
+taskRoutes.get('/', taskController.index);
 
 export { taskRoutes };

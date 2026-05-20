@@ -11,6 +11,6 @@ routes.use('/users', userRoutes);
 routes.use('/sessions', sessionRoutes);
 routes.use('/teams', teamRoutes);
 routes.use('/teams', teamMemberRoutes);
-routes.use('/teams', taskRoutes);
+routes.use('/tasks', taskRoutes);
 
 export { routes };

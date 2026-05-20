@@ -33,6 +33,13 @@ class TaskController {
     });
     return response.status(201).json(task);
   }
+
+  async index(_request: Request, response: Response) {
+    const tasks = await prisma.task.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    return response.status(200).json(tasks);
+  }
 }
 
 export { TaskController };
