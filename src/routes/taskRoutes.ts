@@ -14,5 +14,6 @@ taskRoutes.get('/', taskController.index);
 taskRoutes.put('/:taskId', taskController.update);
 taskRoutes.delete('/:taskId', taskController.delete);
 taskRoutes.patch('/:taskId/assignee', taskController.assignUser);
+taskRoutes.patch('/:taskId/status', taskController.updateStatus);
 
 export { taskRoutes };

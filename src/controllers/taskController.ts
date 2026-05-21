@@ -84,7 +84,7 @@ class TaskController {
       priority: z.enum(['high', 'medium', 'low']),
     });
     const { taskId } = paramsSchema.parse(request.params);
-    const { title, description, priority  } = bodySchema.parse(request.body);
+    const { title, description, priority } = bodySchema.parse(request.body);
 
     const newTask = await prisma.task.update({
       where: { id: taskId, ...(isAdmin ? {} : { user_id: request.user.id }) },
@@ -137,6 +137,39 @@ class TaskController {
       where: { id: taskId },
       data: {
         assigned_to: { connect: { id: assignedTo } },
+      },
+    });
+    return response.status(200).json(newTask);
+  }
+  async updateStatus(request: Request, response: Response) {
+    const isAdmin = request.user.role === 'admin';
+    const paramsSchema = z.object({
+      taskId: z.uuid(),
+    });
+    const bodySchema = z.object({
+      status: z.enum(['pending', 'in_progress', 'completed']),
+    });
+
+    const { taskId } = paramsSchema.parse(request.params);
+    const { status } = bodySchema.parse(request.body);
+
+    const task = await prisma.task.findUniqueOrThrow({ where: { id: taskId } });
+
+    if (!isAdmin && task.user_id !== request.user.id)
+      throw new AppError('Resource Not Found', 404);
+
+    const newTask = await prisma.task.update({
+      where: { id: taskId },
+      data: { ...task, status: status },
+    });
+
+    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
+    const updateLog = await prisma.taskHistory.create({
+      data: {
+        task: { connect: { id: taskId } },
+        changedBy: { connect: { id: task.user_id } },
+        oldStatus: task.status,
+        newStatus: newTask.status,
       },
     });
     return response.status(200).json(newTask);
