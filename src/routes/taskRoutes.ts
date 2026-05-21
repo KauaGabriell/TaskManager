@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { TaskController } from '../controllers/taskController.js';
 import { ensureAuthentication } from '../middlewares/ensureAuthentication.js';
+import { verifyUserAuthorization } from '../middlewares/verifyUserAuthorization.js';
 
 const taskRoutes = Router();
 const taskController = new TaskController();
 
 taskRoutes.use(ensureAuthentication);
+taskRoutes.use(verifyUserAuthorization(['admin', 'member']));
 
 taskRoutes.post('/teams/:teamId', taskController.create);
 taskRoutes.get('/', taskController.index);
