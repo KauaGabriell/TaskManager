@@ -158,21 +158,51 @@ class TaskController {
     if (!isAdmin && task.user_id !== request.user.id)
       throw new AppError('Resource Not Found', 404);
 
-    const newTask = await prisma.task.update({
-      where: { id: taskId },
-      data: { ...task, status: status },
-    });
+    if (task.status === status) throw new AppError('Status Already set', 400);
 
-    // biome-ignore lint/correctness/noUnusedVariables: <explanation>
-    const updateLog = await prisma.taskHistory.create({
-      data: {
-        task: { connect: { id: taskId } },
-        changedBy: { connect: { id: task.user_id } },
-        oldStatus: task.status,
-        newStatus: newTask.status,
-      },
+    const [updatedTask] = await prisma.$transaction([
+      prisma.task.update({
+        where: { id: taskId },
+        data: { status },
+      }),
+
+      prisma.taskHistory.create({
+        data: {
+          task: { connect: { id: taskId } },
+          changedBy: { connect: { id: request.user.id } },
+          oldStatus: task.status,
+          newStatus: status,
+        },
+      }),
+    ]);
+    return response.status(200).json(updatedTask);
+  }
+  async viewUpdateStatusLogs(request: Request, response: Response) {
+    const isAdmin = request.user.role === 'admin';
+    if (!isAdmin) throw new AppError('Forbidden', 403);
+
+    const paramsSchema = z.object({
+      taskId: z.uuid(),
     });
-    return response.status(200).json(newTask);
+    const { taskId } = paramsSchema.parse(request.params);
+
+    const logs = await prisma.taskHistory.findMany({
+      where: { task_id: taskId },
+      select: {
+        id: true,
+        oldStatus: true,
+        newStatus: true,
+        changedAt: true,
+        changedBy: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { changedAt: 'desc' },
+    });
+    return response.status(200).json(logs);
   }
 }
 
