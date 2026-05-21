@@ -5,6 +5,7 @@ module.exports = {
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
+  setupFiles: ["<rootDir>/tests/setupEnv.ts"],
   testEnvironment: "node",
   testMatch: ["**/tests/**/*.test.ts"],
   transform: {
